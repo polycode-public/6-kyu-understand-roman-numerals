@@ -27,6 +27,100 @@ export function getIdentity() {
   return { name, version, description };
 }
 
+export function intToRoman(num) {
+  if (!Number.isInteger(num)) {
+    throw new TypeError("Input must be an integer");
+  }
+  if (num < 1 || num > 3999) {
+    throw new RangeError("Input must be between 1 and 3999");
+  }
+
+  const romanMap = [
+    { value: 1000, numeral: "M" },
+    { value: 900, numeral: "CM" },
+    { value: 500, numeral: "D" },
+    { value: 400, numeral: "CD" },
+    { value: 100, numeral: "C" },
+    { value: 90, numeral: "XC" },
+    { value: 50, numeral: "L" },
+    { value: 40, numeral: "XL" },
+    { value: 10, numeral: "X" },
+    { value: 9, numeral: "IX" },
+    { value: 5, numeral: "V" },
+    { value: 4, numeral: "IV" },
+    { value: 1, numeral: "I" },
+  ];
+
+  let result = "";
+  for (const { value, numeral } of romanMap) {
+    while (num >= value) {
+      result += numeral;
+      num -= value;
+    }
+  }
+  return result;
+}
+
+export function romanToInt(roman) {
+  if (typeof roman !== "string") {
+    throw new TypeError("Input must be a string");
+  }
+
+  const romanMap = {
+    I: 1,
+    V: 5,
+    X: 10,
+    L: 50,
+    C: 100,
+    D: 500,
+    M: 1000,
+  };
+
+  const upperRoman = roman.toUpperCase();
+  if (!/^[IVXLCDM]+$/.test(upperRoman)) {
+    throw new TypeError("Invalid Roman numeral string");
+  }
+
+  // Check for consecutive repeats exceeding the allowed limit
+  if (/IIII|VV|XXXX|LL|CCCC|DD|MMMM/.test(upperRoman)) {
+    throw new TypeError("Invalid Roman numeral: too many consecutive repeats");
+  }
+
+  let result = 0;
+  for (let i = 0; i < upperRoman.length; i++) {
+    const current = romanMap[upperRoman[i]];
+    const next = romanMap[upperRoman[i + 1]];
+
+    if (next && current < next) {
+      if (!isValidSubtractive(upperRoman[i], upperRoman[i + 1])) {
+        throw new TypeError("Invalid subtractive notation");
+      }
+      result += next - current;
+      i++;
+    } else {
+      result += current;
+    }
+  }
+
+  if (result < 1 || result > 3999) {
+    throw new TypeError("Roman numeral represents value outside 1-3999 range");
+  }
+
+  return result;
+}
+
+function isValidSubtractive(smaller, larger) {
+  const validPairs = new Set([
+    "IV",
+    "IX",
+    "XL",
+    "XC",
+    "CD",
+    "CM",
+  ]);
+  return validPairs.has(smaller + larger);
+}
+
 export function main(args) {
   if (args?.includes("--version")) {
     console.log(version);
