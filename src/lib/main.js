@@ -27,42 +27,103 @@ export function getIdentity() {
   return { name, version, description };
 }
 
-// FizzBuzz library functions
+// Roman numeral conversion library functions
 
-export function fizzBuzzSingle(n) {
-  // Validate type
-  if (typeof n !== "number") {
-    throw new TypeError("n must be a number");
+const romanSymbols = [
+  { value: 1000, symbol: "M" },
+  { value: 900, symbol: "CM" },
+  { value: 500, symbol: "D" },
+  { value: 400, symbol: "CD" },
+  { value: 100, symbol: "C" },
+  { value: 90, symbol: "XC" },
+  { value: 50, symbol: "L" },
+  { value: 40, symbol: "XL" },
+  { value: 10, symbol: "X" },
+  { value: 9, symbol: "IX" },
+  { value: 5, symbol: "V" },
+  { value: 4, symbol: "IV" },
+  { value: 1, symbol: "I" },
+];
+
+export function intToRoman(num) {
+  if (typeof num !== "number") {
+    throw new TypeError("Input must be a number");
   }
-  if (!Number.isInteger(n)) {
-    throw new TypeError("n must be an integer");
+  if (!Number.isInteger(num)) {
+    throw new TypeError("Input must be an integer");
   }
-  // Must be a positive integer for single value
-  if (n < 1) {
-    throw new RangeError("n must be a positive integer");
+  if (num < 1 || num > 3999) {
+    throw new RangeError("Number must be between 1 and 3999");
   }
-  if (n % 15 === 0) return "FizzBuzz";
-  if (n % 3 === 0) return "Fizz";
-  if (n % 5 === 0) return "Buzz";
-  return String(n);
+
+  let result = "";
+  let remaining = num;
+
+  for (const { value, symbol } of romanSymbols) {
+    while (remaining >= value) {
+      result += symbol;
+      remaining -= value;
+    }
+  }
+
+  return result;
 }
 
-export function fizzBuzz(n) {
-  if (typeof n !== "number") {
-    throw new TypeError("n must be a number");
+export function romanToInt(roman) {
+  if (typeof roman !== "string") {
+    throw new TypeError("Input must be a string");
   }
-  if (!Number.isInteger(n)) {
-    throw new TypeError("n must be an integer");
+
+  const romanValues = { M: 1000, D: 500, C: 100, L: 50, X: 10, V: 5, I: 1 };
+  const validSubtractive = {
+    I: ["V", "X"],
+    X: ["L", "C"],
+    C: ["D", "M"],
+  };
+
+  let result = 0;
+  const uppercase = roman.toUpperCase();
+
+  // Validate characters
+  for (const char of uppercase) {
+    if (!(char in romanValues)) {
+      throw new TypeError("Invalid Roman numeral character");
+    }
   }
-  if (n < 0) {
-    throw new RangeError("n must be >= 0");
+
+  for (let i = 0; i < uppercase.length; i++) {
+    const currentValue = romanValues[uppercase[i]];
+    const nextValue = i + 1 < uppercase.length ? romanValues[uppercase[i + 1]] : 0;
+
+    if (nextValue > currentValue) {
+      // Subtractive case
+      const current = uppercase[i];
+      const next = uppercase[i + 1];
+
+      // Verify valid subtractive combination
+      if (!(current in validSubtractive) || !validSubtractive[current].includes(next)) {
+        throw new TypeError(`Invalid Roman numeral: ${current} cannot precede ${next}`);
+      }
+
+      result += nextValue - currentValue;
+      i++; // Skip next character as we've processed it
+    } else {
+      result += currentValue;
+    }
   }
-  if (n === 0) return [];
-  const out = [];
-  for (let i = 1; i <= n; i++) {
-    out.push(fizzBuzzSingle(i));
+
+  // Validate the result is in valid range
+  if (result < 1 || result > 3999) {
+    throw new TypeError("Roman numeral converts to invalid number");
   }
-  return out;
+
+  // Round-trip validation: convert back to Roman and compare
+  const roundTrip = intToRoman(result);
+  if (roundTrip !== uppercase) {
+    throw new TypeError("Invalid Roman numeral (strict subtractive notation required)");
+  }
+
+  return result;
 }
 
 export function main(args) {
