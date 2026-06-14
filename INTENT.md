@@ -1,30 +1,27 @@
 # Mission
 
-A JavaScript library for converting between integers and Roman numeral strings.
+A JavaScript library for converting between integers and Roman numeral strings,
+exporting its public API as named exports from `src/lib/main.js`.
 
 ## Required Capabilities
 
-- Convert an integer (1–3999) to its Roman numeral representation using subtractive notation (IV, IX, XL, XC, CD, CM).
-- Convert a Roman numeral string back to an integer.
-- The round-trip property must hold: converting to Roman and back yields the original integer for all valid values.
+- `intToRoman(n)` — integer (1-3999) to Roman string (subtractive notation).
+- `romanToInt(s)` — Roman string to integer; round-trip must hold.
+- `isValidRoman(s)` — returns `true`/`false` for whether `s` is a valid strict
+  subtractive Roman numeral string, WITHOUT throwing. (NEW)
 
 ## Requirements
 
-- Throw `RangeError` for numbers outside 1–3999.
-- Throw `TypeError` for invalid Roman numeral strings.
-- Handle subtractive notation correctly (e.g. IV = 4, not IIII).
-- Export all public API as named exports from `src/lib/main.js`.
-- Comprehensive unit tests including boundary values (1, 3999), subtractive cases, and invalid inputs.
-- README with usage examples and conversion table.
+- `intToRoman`/`romanToInt` throw `RangeError`/`TypeError` on invalid input.
+- `isValidRoman` never throws; it returns a boolean for any string input.
+- Comprehensive unit tests, including for `isValidRoman` (valid + invalid).
 
 ## Acceptance Criteria
 
-- [ ] Converting `1994` to Roman produces `"MCMXCIV"`
-- [ ] Converting `"MCMXCIV"` from Roman produces `1994`
-- [ ] Converting `4` to Roman produces `"IV"`
-- [ ] Round-trip holds for all n in 1–3999
-- [ ] Converting `0` to Roman throws `RangeError`
-- [ ] Converting `4000` to Roman throws `RangeError`
-- [ ] Converting `"IIII"` from Roman throws `TypeError` (strict: only subtractive notation accepted)
-- [ ] All unit tests pass
-- [ ] README documents usage with examples
+- [x] `1994` to Roman is `"MCMXCIV"` and back; round-trip holds for 1-3999
+- [x] `4` to Roman is `"IV"`
+- [ ] `isValidRoman("MCMXCIV")` returns `true`
+- [ ] `isValidRoman("IIII")` returns `false` (strict subtractive)
+- [ ] `isValidRoman("hello")` returns `false` (no throw)
+- [ ] `isValidRoman` is a named export from `src/lib/main.js`
+- [ ] All unit tests pass, including new `isValidRoman` tests
