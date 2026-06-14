@@ -111,25 +111,98 @@ The pipeline runs as GitHub Actions workflows. An LLM supervisor gathers reposit
 
 ## Examples
 
-Below are quick examples showing how to use the fizzBuzz library from this repository.
+Below are quick examples showing how to use the Roman numeral conversion library from this repository.
+
+### Integer to Roman Conversion
 
 Node (ESM):
 
 ```js
-import { fizzBuzz, fizzBuzzSingle } from './src/lib/main.js';
+import { intToRoman } from './src/lib/main.js';
 
-console.log(fizzBuzzSingle(3)); // "Fizz"
-console.log(fizzBuzz(15)); // ["1","2","Fizz",...,"FizzBuzz"]
+console.log(intToRoman(1994));  // "MCMXCIV"
+console.log(intToRoman(4));     // "IV"
+console.log(intToRoman(1));     // "I"
+console.log(intToRoman(3999));  // "MMMCMXCIX"
+```
+
+### Roman to Integer Conversion
+
+```js
+import { romanToInt } from './src/lib/main.js';
+
+console.log(romanToInt("MCMXCIV"));  // 1994
+console.log(romanToInt("IV"));       // 4
+console.log(romanToInt("I"));        // 1
+console.log(romanToInt("MMMCMXCIX")); // 3999
+```
+
+### Round-trip Conversion
+
+```js
+import { intToRoman, romanToInt } from './src/lib/main.js';
+
+const num = 1994;
+const roman = intToRoman(num);      // "MCMXCIV"
+const back = romanToInt(roman);     // 1994
+console.log(num === back);          // true
 ```
 
 Browser (via src/web/lib.js):
 
 ```html
 <script type="module">
-  import { fizzBuzz, fizzBuzzSingle } from './src/web/lib.js';
-  console.log(fizzBuzz(15));
-  console.log(fizzBuzzSingle(7));
+  import { intToRoman, romanToInt } from './src/web/lib.js';
+  console.log(intToRoman(49));     // "XLIX"
+  console.log(romanToInt("XLIX")); // 49
 </script>
+```
+
+## Roman Numeral Conversion Table
+
+| Integer | Roman | Integer | Roman | Integer | Roman |
+|---------|-------|---------|-------|---------|-------|
+| 1 | I | 11 | XI | 21 | XXI |
+| 2 | II | 12 | XII | 30 | XXX |
+| 3 | III | 13 | XIII | 40 | XL |
+| 4 | IV | 14 | XIV | 50 | L |
+| 5 | V | 15 | XV | 90 | XC |
+| 6 | VI | 16 | XVI | 100 | C |
+| 7 | VII | 17 | XVII | 400 | CD |
+| 8 | VIII | 18 | XVIII | 500 | D |
+| 9 | IX | 19 | XIX | 900 | CM |
+| 10 | X | 20 | XX | 1000 | M |
+
+## API
+
+### `intToRoman(num: number): string`
+
+Converts an integer (1–3999) to its Roman numeral representation using subtractive notation.
+
+- **Parameters**: `num` — an integer between 1 and 3999 (inclusive)
+- **Returns**: Roman numeral string
+- **Throws**:
+  - `TypeError` if input is not an integer
+  - `RangeError` if input is outside 1–3999
+
+**Example**:
+```js
+intToRoman(1994); // "MCMXCIV"
+```
+
+### `romanToInt(roman: string): string`
+
+Converts a Roman numeral string back to an integer.
+
+- **Parameters**: `roman` — a valid Roman numeral string (case-insensitive)
+- **Returns**: integer between 1 and 3999
+- **Throws**:
+  - `TypeError` if input is not a valid Roman numeral string
+  - `TypeError` if subtractive notation is used incorrectly (e.g., "IIII" instead of "IV")
+
+**Example**:
+```js
+romanToInt("MCMXCIV"); // 1994
 ```
 
 ## Configuration
