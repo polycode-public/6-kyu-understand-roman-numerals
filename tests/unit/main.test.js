@@ -9,6 +9,7 @@ import {
   description,
   intToRoman,
   romanToInt,
+  isValidRoman,
 } from "../../src/lib/main.js";
 
 describe("Main Output", () => {
@@ -178,5 +179,88 @@ describe("Round-trip conversion", () => {
     for (const num of testCases) {
       expect(romanToInt(intToRoman(num))).toBe(num);
     }
+  });
+});
+
+describe("isValidRoman", () => {
+  test("returns true for valid Roman numerals", () => {
+    expect(isValidRoman("I")).toBe(true);
+    expect(isValidRoman("IV")).toBe(true);
+    expect(isValidRoman("IX")).toBe(true);
+    expect(isValidRoman("MCMXCIV")).toBe(true);
+    expect(isValidRoman("MMMCMXCIX")).toBe(true);
+    expect(isValidRoman("V")).toBe(true);
+    expect(isValidRoman("X")).toBe(true);
+    expect(isValidRoman("L")).toBe(true);
+    expect(isValidRoman("C")).toBe(true);
+    expect(isValidRoman("D")).toBe(true);
+    expect(isValidRoman("M")).toBe(true);
+  });
+
+  test("returns false for invalid strict subtractive notation", () => {
+    expect(isValidRoman("IIII")).toBe(false);
+    expect(isValidRoman("IL")).toBe(false);
+    expect(isValidRoman("IC")).toBe(false);
+    expect(isValidRoman("ID")).toBe(false);
+    expect(isValidRoman("IM")).toBe(false);
+    expect(isValidRoman("VX")).toBe(false);
+    expect(isValidRoman("VL")).toBe(false);
+    expect(isValidRoman("VC")).toBe(false);
+    expect(isValidRoman("VD")).toBe(false);
+    expect(isValidRoman("VM")).toBe(false);
+    expect(isValidRoman("XD")).toBe(false);
+    expect(isValidRoman("XM")).toBe(false);
+    expect(isValidRoman("LC")).toBe(false);
+    expect(isValidRoman("LD")).toBe(false);
+    expect(isValidRoman("LM")).toBe(false);
+    expect(isValidRoman("DM")).toBe(false);
+  });
+
+  test("returns false for excessive repeats", () => {
+    expect(isValidRoman("IIII")).toBe(false);
+    expect(isValidRoman("VV")).toBe(false);
+    expect(isValidRoman("XXXX")).toBe(false);
+    expect(isValidRoman("LL")).toBe(false);
+    expect(isValidRoman("CCCC")).toBe(false);
+    expect(isValidRoman("DD")).toBe(false);
+    expect(isValidRoman("MMMM")).toBe(false);
+  });
+
+  test("returns false for invalid characters", () => {
+    expect(isValidRoman("hello")).toBe(false);
+    expect(isValidRoman("ABCD")).toBe(false);
+    expect(isValidRoman("123")).toBe(false);
+    expect(isValidRoman("IXA")).toBe(false);
+    expect(isValidRoman("XY")).toBe(false);
+  });
+
+  test("returns false for empty string", () => {
+    expect(isValidRoman("")).toBe(false);
+  });
+
+  test("returns false for non-string input", () => {
+    expect(isValidRoman(null)).toBe(false);
+    expect(isValidRoman(undefined)).toBe(false);
+    expect(isValidRoman(123)).toBe(false);
+    expect(isValidRoman({})).toBe(false);
+    expect(isValidRoman([])).toBe(false);
+  });
+
+  test("handles lowercase input", () => {
+    expect(isValidRoman("mcmxciv")).toBe(true);
+    expect(isValidRoman("iv")).toBe(true);
+    expect(isValidRoman("iiii")).toBe(false);
+  });
+
+  test("returns false for values outside valid range", () => {
+    expect(isValidRoman("MMMM")).toBe(false);
+  });
+
+  test("never throws", () => {
+    expect(() => isValidRoman("MCMXCIV")).not.toThrow();
+    expect(() => isValidRoman("hello")).not.toThrow();
+    expect(() => isValidRoman(null)).not.toThrow();
+    expect(() => isValidRoman(undefined)).not.toThrow();
+    expect(() => isValidRoman(123)).not.toThrow();
   });
 });
