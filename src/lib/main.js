@@ -121,6 +121,58 @@ function isValidSubtractive(smaller, larger) {
   return validPairs.has(smaller + larger);
 }
 
+export function isValidRoman(s) {
+  if (typeof s !== "string") {
+    return false;
+  }
+
+  if (s.length === 0) {
+    return false;
+  }
+
+  const romanMap = {
+    I: 1,
+    V: 5,
+    X: 10,
+    L: 50,
+    C: 100,
+    D: 500,
+    M: 1000,
+  };
+
+  const upperRoman = s.toUpperCase();
+
+  // Check if all characters are valid Roman numerals
+  if (!/^[IVXLCDM]+$/.test(upperRoman)) {
+    return false;
+  }
+
+  // Check for consecutive repeats exceeding the allowed limit
+  if (/IIII|VV|XXXX|LL|CCCC|DD|MMMM/.test(upperRoman)) {
+    return false;
+  }
+
+  // Check for invalid subtractive notation
+  for (let i = 0; i < upperRoman.length - 1; i++) {
+    const current = romanMap[upperRoman[i]];
+    const next = romanMap[upperRoman[i + 1]];
+
+    if (next && current < next) {
+      if (!isValidSubtractive(upperRoman[i], upperRoman[i + 1])) {
+        return false;
+      }
+    }
+  }
+
+  // Verify the value is in valid range
+  try {
+    const value = romanToInt(upperRoman);
+    return value >= 1 && value <= 3999;
+  } catch {
+    return false;
+  }
+}
+
 export function main(args) {
   if (args?.includes("--version")) {
     console.log(version);
